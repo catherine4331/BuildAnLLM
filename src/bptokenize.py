@@ -19,4 +19,4 @@ print(f"y: {y}")
 for i in range(1, context_size + 1):
     context = enc_sample[:i]
     desired = enc_sample[i]
-    print(context, "---->", desired)
+    print(tokenizer.decode(context), "---->", tokenizer.decode([desired]))
