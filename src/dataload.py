@@ -48,3 +48,16 @@ data_iter = iter(dataloader)
 inputs, targets = next(data_iter)
 print("Token IDs:\n", inputs)
 print("\nInputs shape:\n", inputs.shape)
+
+# Make the embeddings
+token_embeddings = token_embedding_layer(inputs)
+print(token_embeddings.shape)
+
+# Make the absolute embeddings
+context_length = max_length
+pos_embedding_layer = torch.nn.Embedding(context_length, output_dim)
+pos_embeddings = pos_embedding_layer(torch.arange(context_length))
+print(pos_embeddings.shape)
+
+input_embeddings = token_embeddings + pos_embeddings
+print(input_embeddings.shape)
