@@ -29,6 +29,13 @@ values = inputs @ W_value
 
 # The attention score for each token is the dot product of the query vector with the key vector
 # Note these are the transformed input vectors that have gone through out weight matrices
-keys_2 = keys[1]
-attn_score_22 = query_2.dot(keys_2)
-print(attn_score_22)
+attn_scores_2 = query_2 @ keys.T
+
+# Now we calculate the attention weights using the softmax function. We divide by the root of d_k 
+# as this is the variance of the dot product of Q and K (it grows larger with the key embedding dimension)
+d_k = keys.shape[-1]
+attn_weights_2 = torch.softmax(attn_scores_2 / d_k**0.5, dim=-1)
+
+# Now we calculate the context vector, as a weighted sum of each value vector
+context_vec_2 = attn_weights_2 @ values
+print(context_vec_2)
