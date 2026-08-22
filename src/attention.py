@@ -37,6 +37,7 @@ class SelfAttention_v2(nn.Module):
         context_vec = attn_weights @ values
         return context_vec
 
+torch.manual_seed(789)
 inputs = torch.tensor(
 [[0.43, 0.15, 0.89], # Your (x^1)
 [0.55, 0.87, 0.66], # journey (x^2)
@@ -48,12 +49,29 @@ inputs = torch.tensor(
 d_in = inputs.shape[1]
 d_out = 2
 
-sa_1 = SelfAttention_v1(d_in, d_out)
+# We are going to build a causal attention system
 sa_2 = SelfAttention_v2(d_in, d_out)
+queries = sa_2.W_query(inputs)
+keys = sa_2.W_key(inputs)
+attn_scores = queries @ keys.T
+attn_weights = torch.softmax(attn_scores / keys.shape[-1]**0.5, dim=-1)
 
-sa_1.W_key = nn.Parameter(sa_2.W_key.weight.T)
-sa_1.W_query = nn.Parameter(sa_2.W_query.weight.T)
-sa_1.W_value = nn.Parameter(sa_2.W_value.weight.T)
+# Now we mask out future attention scores
+context_length = attn_scores.shape[0]
+mask_simple = torch.tril(torch.ones(context_length, context_length))
+masked_simple = attn_weights * mask_simple
 
-print(sa_1(inputs))
-print(sa_2(inputs))
+# And normalised the masked scores
+row_sums = masked_simple.sum(dim=-1, keepdim=True)
+masked_simple_norm = masked_simple / row_sums
+print(masked_simple_norm)
+
+# A better way
+mask = torch.triu(torch.ones(context_length, context_length), diagonal=1)
+masked = attn_scores.masked_fill(mask.bool(), -torch.inf)
+attn_weights = torch.softmax(masked / keys.shape[-1]**0.5, dim=-1)
+
+# Adding some dropout
+torch.manual_seed(123)
+dropout = torch.nn.Dropout(0.5)
+print(dropout(attn_weights))
