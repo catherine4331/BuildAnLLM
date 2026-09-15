@@ -2,16 +2,6 @@ import torch
 import torch.nn as nn
 from attention.multihead_attention import MultiHeadAttention
 
-GPT_CONFIG_124M = {
-    "vocab_size": 50257,
-    "context_length": 1024,
-    "emb_dim": 768,
-    "num_heads": 12,
-    "num_layers": 12,
-    "drop_rate": 0.1,
-    "qkv_bias": False
-}
-
 class TransformerBlock(nn.Module):
     def __init__(self, cfg):
         super().__init__()
@@ -76,12 +66,3 @@ class FeedForward(nn.Module):
 
     def forward(self, x):
         return self.layers(x)
-
-
-torch.manual_seed(123)
-x = torch.rand(2, 4, 768)
-block = TransformerBlock(GPT_CONFIG_124M)
-output = block(x)
-
-print(x.shape)
-print(output.shape)
