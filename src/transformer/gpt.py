@@ -5,10 +5,20 @@ from transformer.transformer import TransformerBlock, LayerNorm
 
 GPT_CONFIG_124M = {
     "vocab_size": 50257,
-    "context_length": 1024,
+    "context_length": 256,
     "emb_dim": 768,
     "num_heads": 12,
     "num_layers": 12,
+    "drop_rate": 0.1,
+    "qkv_bias": False
+}
+
+GPT_CONFIG_MEDIUM = {
+    "vocab_size": 50257,
+    "context_length": 1024,
+    "emb_dim": 1024,
+    "num_heads": 16,
+    "num_layers": 24,
     "drop_rate": 0.1,
     "qkv_bias": False
 }
@@ -53,9 +63,17 @@ batch.append(torch.tensor(tokenizer.encode(txt2)))
 batch = torch.stack(batch, dim=0)
 
 torch.manual_seed(123)
-model = GPTModel(GPT_CONFIG_124M)
+model = GPTModel(GPT_CONFIG_MEDIUM)
 
-out = model(batch)
-print("Input batch:\n", batch)
-print("\nOutput shape:", out.shape)
-print(out)
+# out = model(batch)
+# print("Input batch:\n", batch)
+# print("\nOutput shape:", out.shape)
+# print(out)
+
+# total_params = sum(p.numel() for p in model.parameters())
+# print(f"Total number of parameters: {total_params:,}")
+
+# trf = TransformerBlock(GPT_CONFIG_MEDIUM)
+# ff_params = sum(p.numel() for p in trf.ff.parameters())
+# attn_params = sum(p.numel() for p in trf.att.parameters())
+# print(f"Total ff params: {ff_params:,}. Total attn params: {attn_params:,}")
