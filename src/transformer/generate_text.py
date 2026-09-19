@@ -17,17 +17,17 @@ def generate_text_simple(model, idx, max_new_tokens, context_size):
 
     return idx
 
-start_context = "Hello, I am"
-tokenizer = tiktoken.get_encoding("gpt2")
-encoded = tokenizer.encode(start_context)
-encoded_tensor = torch.tensor(encoded).unsqueeze(0)
+# start_context = "Hello, I am"
+# tokenizer = tiktoken.get_encoding("gpt2")
+# encoded = tokenizer.encode(start_context)
+# encoded_tensor = torch.tensor(encoded).unsqueeze(0)
 
-torch.manual_seed(123)
-model = GPTModel(GPT_CONFIG_MEDIUM)
-model.eval()
+# torch.manual_seed(123)
+# model = GPTModel(GPT_CONFIG_MEDIUM)
+# model.eval()
 
-out = generate_text_simple(
-    model, encoded_tensor, 6, GPT_CONFIG_MEDIUM["context_length"]
-)
-decoded_text = tokenizer.decode(out.squeeze(0).tolist())
-print(decoded_text)
+# out = generate_text_simple(
+#     model, encoded_tensor, 6, GPT_CONFIG_MEDIUM["context_length"]
+# )
+# decoded_text = tokenizer.decode(out.squeeze(0).tolist())
+# print(decoded_text)
