@@ -63,8 +63,6 @@ def generate_and_print_sample(model, tokenizer, device, start_context):
     print(decoded_text.replace("\n", " "))
     model.train()
 
-torch.manual_seed(123)
-
 file_path = "../the-verdict.txt"
 with open(file_path, "r", encoding="utf-8") as file:
     text_data = file.read()
@@ -74,6 +72,7 @@ split_idx = int(train_ratio * len(text_data))
 train_data = text_data[:split_idx]
 val_data = text_data[split_idx:] 
 
+torch.manual_seed(123)
 train_loader = create_dataloader_v1(
     train_data,
     batch_size=2,
@@ -104,9 +103,20 @@ optimizer = torch.optim.AdamW(
     model.parameters(),
     lr=0.0004, weight_decay=0.1
 )
-num_epochs = 10
+num_epochs = 11
 train_losses, val_losses, tokens_seen = train_model_simple(
     model, train_loader, val_loader, optimizer, device,
     num_epochs=num_epochs, eval_freq=5, eval_iter=5,
     start_context="Every effort moves you", tokenizer=tokenizer
 )
+
+model.to("cpu")
+model.eval()
+
+token_ids = generate_text_simple(
+    model,
+    text_to_token_ids("Every effort moves you", tokenizer),
+    25,
+    GPT_CONFIG_124M["context_length"]
+)
+print("Output text:\n", token_ids_to_text(token_ids, tokenizer))
