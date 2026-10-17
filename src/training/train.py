@@ -1,8 +1,8 @@
 import torch
 import tiktoken
 from training.loss import calc_loss_batch, calc_loss_loader, text_to_token_ids, token_ids_to_text
-from transformer.generate_text import generate_text_simple
-from transformer.gpt import GPTModel, GPT_CONFIG_124M
+from transformer.generate_text import generate_text_simple, generate
+from transformer.gpt import GPTModel, GPT_CONFIG_124M, GPT_CONFIG_MEDIUM
 from dataload.dataload import create_dataloader_v1
 
 def train_model_simple(model, train_loader, val_loader,
@@ -118,5 +118,16 @@ token_ids = generate_text_simple(
     text_to_token_ids("Every effort moves you", tokenizer),
     25,
     GPT_CONFIG_124M["context_length"]
+)
+print("Output text:\n", token_ids_to_text(token_ids, tokenizer))
+
+torch.manual_seed(123)
+token_ids = generate(
+    model=model,
+    idx=text_to_token_ids("Every effort moves you", tokenizer),
+    max_new_tokens=15,
+    context_size=GPT_CONFIG_124M["context_length"],
+    top_k=25,
+    temperature=1.4
 )
 print("Output text:\n", token_ids_to_text(token_ids, tokenizer))

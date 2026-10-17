@@ -33,4 +33,17 @@ def print_sampled_tokens(probas):
     for i, freq in enumerate(sampled_ids):
         print(f"{freq} x {inverse_vocab[i]}")
 
-print_sampled_tokens(probas)
+top_k = 3
+top_logits, top_pos = torch.topk(next_token_logits, top_k)
+print("Top logits:", top_logits)
+print("Top positions:", top_pos)
+
+new_logits = torch.where(
+    condition=next_token_logits < top_logits[-1],
+    input=torch.tensor(float('-inf')),
+    other=next_token_logits
+)
+print(new_logits)
+
+topk_probas = torch.softmax(new_logits, dim=0)
+print(topk_probas)

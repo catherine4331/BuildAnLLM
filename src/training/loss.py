@@ -1,7 +1,8 @@
 import torch
 import tiktoken
-from transformer.gpt import GPTModel, GPT_CONFIG_124M
-from transformer.generate_text import generate_text_simple
+
+from transformer.gpt import GPTModel, GPT_CONFIG_MEDIUM
+from transformer.generate_text import generate_text_simple, generate
 from dataload.dataload import create_dataloader_v1
 
 def text_to_token_ids(text, tokenizer):
@@ -42,7 +43,7 @@ def calc_loss_loader(data_loader, model, device, num_batches=None):
     return total_loss / num_batches
 
 # torch.manual_seed(123)
-# model = GPTModel(GPT_CONFIG_124M)
+# model = GPTModel(GPT_CONFIG_MEDIUM)
 # model.eval()
 
 # start_context = "Every effort moves you"
@@ -52,7 +53,7 @@ def calc_loss_loader(data_loader, model, device, num_batches=None):
 #     model,
 #     text_to_token_ids(start_context, tokenizer),
 #     10,
-#     GPT_CONFIG_124M["context_length"]
+#     GPT_CONFIG_MEDIUM["context_length"]
 # )
 
 # # This prints gibberish - The model has not been trained yet
@@ -97,8 +98,8 @@ def calc_loss_loader(data_loader, model, device, num_batches=None):
 # train_loader = create_dataloader_v1(
 #     train_data,
 #     batch_size=2,
-#     max_length=GPT_CONFIG_124M["context_length"],
-#     stride=GPT_CONFIG_124M["context_length"],
+#     max_length=GPT_CONFIG_MEDIUM["context_length"],
+#     stride=GPT_CONFIG_MEDIUM["context_length"],
 #     drop_last=True,
 #     shuffle=True,
 #     num_workers=0
@@ -106,8 +107,8 @@ def calc_loss_loader(data_loader, model, device, num_batches=None):
 # val_loader = create_dataloader_v1(
 #     val_data,
 #     batch_size=2,
-#     max_length=GPT_CONFIG_124M["context_length"],
-#     stride=GPT_CONFIG_124M["context_length"],
+#     max_length=GPT_CONFIG_MEDIUM["context_length"],
+#     stride=GPT_CONFIG_MEDIUM["context_length"],
 #     drop_last=False,
 #     shuffle=False,
 #     num_workers=0
@@ -121,3 +122,20 @@ def calc_loss_loader(data_loader, model, device, num_batches=None):
 #     val_loss = calc_loss_loader(val_loader, model, device)
 # print("Training loss:", train_loss)
 # print("Validation loss:", val_loss)
+
+# out = generate_text_simple(
+#     model, text_to_token_ids("Every effort moves you", tokenizer), 6, GPT_CONFIG_MEDIUM["context_length"]
+# )
+# decoded_text = tokenizer.decode(out.squeeze(0).tolist())
+# print(decoded_text)
+
+# torch.manual_seed(123)
+# token_ids = generate(
+#     model=model,
+#     idx=text_to_token_ids("Every effort moves you", tokenizer),
+#     max_new_tokens=15,
+#     context_size=GPT_CONFIG_MEDIUM["context_length"],
+#     top_k=25,
+#     temperature=1.4
+# )
+# print("Output text:\n", token_ids_to_text(token_ids, tokenizer))
