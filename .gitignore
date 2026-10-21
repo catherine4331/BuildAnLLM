@@ -220,3 +220,6 @@ __marimo__/
 .vscode
 
 gpt2/
+
+*.csv
+sms_spam_collection/

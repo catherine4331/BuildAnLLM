@@ -88,34 +88,34 @@ def load_weights_into_gpt(gpt, params):
     gpt.final_norm.shift = assign(gpt.final_norm.scale, params["b"])
     gpt.out_head.weight = assign(gpt.out_head.weight, params["wte"])
 
-settings, params = download_and_load_gpt2(
-    model_size = "124M", models_dir="gpt2"
-)
+# settings, params = download_and_load_gpt2(
+#     model_size = "124M", models_dir="gpt2"
+# )
 
-print("Settings:", settings)
-print("Params:", params.keys())
+# print("Settings:", settings)
+# print("Params:", params.keys())
 
-NEW_CONFIG = GPT_CONFIG_124M.copy()
-NEW_CONFIG.update({"context_length": 1024})
-NEW_CONFIG.update({"qkv_bias": True})
+# NEW_CONFIG = GPT_CONFIG_124M.copy()
+# NEW_CONFIG.update({"context_length": 1024})
+# NEW_CONFIG.update({"qkv_bias": True})
 
-gpt = GPTModel(NEW_CONFIG)
-gpt.eval()
-load_weights_into_gpt(gpt, params)
+# gpt = GPTModel(NEW_CONFIG)
+# gpt.eval()
+# load_weights_into_gpt(gpt, params)
 
-tokenizer = tiktoken.get_encoding("gpt2")
-print(torch.cuda.is_available())
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-torch.cuda.manual_seed_all(123)
-gpt.to(device)
+# tokenizer = tiktoken.get_encoding("gpt2")
+# print(torch.cuda.is_available())
+# device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# torch.cuda.manual_seed_all(123)
+# gpt.to(device)
 
-torch.manual_seed(123)
-token_ids = generate(
-    model=gpt,
-    idx = text_to_token_ids("Every effort moves you", tokenizer).to(device),
-    max_new_tokens=25,
-    context_size=NEW_CONFIG["context_length"],
-    top_k=50,
-    temperature=1.5
-)
-print("Output text:\n", token_ids_to_text(token_ids, tokenizer))
+# torch.manual_seed(123)
+# token_ids = generate(
+#     model=gpt,
+#     idx = text_to_token_ids("Every effort moves you", tokenizer).to(device),
+#     max_new_tokens=25,
+#     context_size=NEW_CONFIG["context_length"],
+#     top_k=50,
+#     temperature=1.5
+# )
+# print("Output text:\n", token_ids_to_text(token_ids, tokenizer))
